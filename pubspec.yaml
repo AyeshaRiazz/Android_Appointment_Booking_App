@@ -1,0 +1,37 @@
+name: appointment_booking_app
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ✅ COMPATIBLE WITH FLUTTER 3.38.4 (December 2025)
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
+
+  # Flutter icons
+  cupertino_icons: ^1.0.8
+  
+  # Optional utilities
+  provider: ^6.1.1
+  google_sign_in: ^6.1.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0  # Updated to match Flutter 3.384
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
