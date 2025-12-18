@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:appointment_booking_app/firebase_auth_service.dart';
+import 'PatientSignUpScreen.dart';
 
-class AdminSignUpScreen extends StatefulWidget {
+class PatientLoginScreen extends StatefulWidget {
   final Color primaryColor = const Color(0xFFED7D6D); // Coral
   final Color secondaryColor = const Color(0xFF6AB1AB); // Teal
   final Color backgroundColor = const Color(0xFFF8F9FA);
   final Color textColor = const Color(0xFF333333);
 
   @override
-  _AdminSignUpScreenState createState() => _AdminSignUpScreenState();
+  _PatientLoginScreenState createState() => _PatientLoginScreenState();
 }
 
-class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
+class _PatientLoginScreenState extends State<PatientLoginScreen> {
   late final FirebaseAuthService _auth;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -28,28 +27,14 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
     _auth = FirebaseAuthService();
   }
 
-  void _signUp() async {
+  void _signIn() async {
     if (_formKey.currentState!.validate()) {
-      if (_passwordController.text != _confirmPasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Passwords do not match.'),
-            backgroundColor: Colors.red,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        );
-        return;
-      }
-
       setState(() {
         _isLoading = true;
       });
 
       try {
-        final user = await _auth.adminSignUpWithEmailAndPassword(
+        final user = await _auth.patientSignInWithEmailAndPassword(
           _emailController.text,
           _passwordController.text,
         );
@@ -58,7 +43,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: const Text('Admin account created successfully! Please log in.'),
+                content: const Text('Login successful!'),
                 backgroundColor: widget.secondaryColor,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
@@ -66,13 +51,10 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                 ),
               ),
             );
-          }
 
-          Future.delayed(const Duration(milliseconds: 1500), () {
-            if (mounted) {
-              Navigator.of(context).pop();
-            }
-          });
+            // Navigate to patient dashboard/home screen
+            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PatientDashboard()));
+          }
         }
       } catch (errorMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -163,14 +145,14 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                               ),
                             ),
                             child: Icon(
-                              Icons.person_add_alt_1,
+                              Icons.person,
                               color: Colors.white,
                               size: 42,
                             ),
                           ),
                           const SizedBox(height: 14),
                           Text(
-                            "Admin Registration",
+                            "Patient Login",
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.w800,
@@ -180,7 +162,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            "Create administrator account",
+                            "Access your patient account",
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.white.withOpacity(0.9),
@@ -195,7 +177,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
 
               const SizedBox(height: 40),
 
-              // Sign Up Form Card
+              // Login Form Card
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 padding: const EdgeInsets.all(30),
@@ -223,7 +205,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                           fontSize: 15,
                         ),
                         decoration: InputDecoration(
-                          labelText: "Admin Email",
+                          labelText: "Patient Email",
                           labelStyle: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 14,
@@ -275,7 +257,7 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                           fontSize: 15,
                         ),
                         decoration: InputDecoration(
-                          labelText: "Password (min 6 characters)",
+                          labelText: "Password",
                           labelStyle: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 14,
@@ -321,149 +303,18 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter password';
                           }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-                          return null;
-                        },
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Confirm Password Field
-                      TextFormField(
-                        controller: _confirmPasswordController,
-                        obscureText: _obscureConfirmPassword,
-                        style: TextStyle(
-                          color: widget.textColor,
-                          fontSize: 15,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: "Confirm Password",
-                          labelStyle: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
-                          ),
-                          prefixIcon: Container(
-                            width: 50,
-                            alignment: Alignment.center,
-                            child: Icon(
-                              Icons.lock_open_outlined,
-                              color: widget.primaryColor,
-                              size: 20,
-                            ),
-                          ),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _obscureConfirmPassword = !_obscureConfirmPassword;
-                              });
-                            },
-                            icon: Icon(
-                              _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                              color: Colors.grey.shade500,
-                              size: 20,
-                            ),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: widget.primaryColor, width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm password';
-                          }
-                          if (value != _passwordController.text) {
-                            return 'Passwords do not match';
-                          }
                           return null;
                         },
                       ),
 
                       const SizedBox(height: 30),
 
-                      // Password requirements
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.grey.shade200,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Password Requirements:",
-                              style: TextStyle(
-                                color: Colors.grey.shade700,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: _passwordController.text.length >= 6 ? Colors.green : Colors.grey.shade400,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "At least 6 characters",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_circle,
-                                  color: _passwordController.text == _confirmPasswordController.text &&
-                                      _passwordController.text.isNotEmpty ? Colors.green : Colors.grey.shade400,
-                                  size: 14,
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Passwords match",
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // Sign Up Button
+                      // Login Button
                       SizedBox(
                         width: double.infinity,
                         height: 52,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _signUp,
+                          onPressed: _isLoading ? null : _signIn,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: widget.primaryColor,
                             foregroundColor: Colors.white,
@@ -486,12 +337,12 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                Icons.person_add_alt_1,
+                                Icons.login,
                                 size: 20,
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                "Create Admin Account",
+                                "Login to Account",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -505,49 +356,43 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
 
                       const SizedBox(height: 20),
 
-                      // Info text
-                      Text(
-                        "Admin accounts have full access to the management system",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                        ),
+                      // Don't have account
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account?",
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => PatientSignUpScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Sign up here",
+                              style: TextStyle(
+                                color: widget.primaryColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+
+                      const SizedBox(height: 10),
                     ],
                   ),
                 ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Already have account
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Already have an account?",
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "Login here",
-                      style: TextStyle(
-                        color: widget.primaryColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
               ),
 
               const SizedBox(height: 30),
@@ -562,7 +407,6 @@ class _AdminSignUpScreenState extends State<AdminSignUpScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 }

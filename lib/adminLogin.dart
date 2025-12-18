@@ -35,7 +35,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       });
 
       try {
-        final user = await _auth.signInWithEmailAndPassword(
+        final user = await _auth.adminSignInWithEmailAndPassword(
           _emailController.text,
           _passwordController.text,
         );

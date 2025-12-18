@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:appointment_booking_app/adminLogin.dart';
+import 'PatientLoginScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   // Main theme colors
@@ -119,14 +120,10 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: InkWell(
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Patient login screen coming soon!'),
-                      backgroundColor: secondaryColor,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PatientLoginScreen(),
                     ),
                   );
                 },
