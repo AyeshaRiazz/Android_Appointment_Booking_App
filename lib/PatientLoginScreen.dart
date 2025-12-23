@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appointment_booking_app/firebase_auth_service.dart';
 import 'PatientSignUpScreen.dart';
+import 'patientDashboard.dart';
 
 class PatientLoginScreen extends StatefulWidget {
   final Color primaryColor = const Color(0xFFED7D6D); // Coral
@@ -41,14 +42,10 @@ class _PatientLoginScreenState extends State<PatientLoginScreen> {
 
         if (user != null) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text('Login successful!'),
-                backgroundColor: widget.secondaryColor,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => patientDashboard(patientName: _emailController.text),
               ),
             );
 
