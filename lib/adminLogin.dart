@@ -35,9 +35,10 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       });
 
       try {
-        final user = await _auth.adminSignInWithEmailAndPassword(
-          _emailController.text,
-          _passwordController.text,
+        // Updated method name
+        final user = await _auth.adminLogin(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
         );
 
         if (user != null) {
@@ -243,12 +244,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your email';
-                          }
-                          if (!value.contains('@')) {
-                            return 'Please enter a valid email';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter your email';
+                          if (!value.contains('@')) return 'Please enter a valid email';
                           return null;
                         },
                       ),
@@ -307,12 +304,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                         ),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
-                          }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter your password';
+                          if (value.length < 6) return 'Password must be at least 6 characters';
                           return null;
                         },
                       ),
@@ -346,10 +339,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                               : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.login,
-                                size: 20,
-                              ),
+                              Icon(Icons.login, size: 20),
                               const SizedBox(width: 10),
                               Text(
                                 "Login to Dashboard",
@@ -362,37 +352,6 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                             ],
                           ),
                         ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Divider with "or"
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "OR",
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: Colors.grey.shade300,
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
                       ),
 
                       const SizedBox(height: 24),
@@ -423,10 +382,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.person_add_alt_1,
-                                size: 18,
-                              ),
+                              Icon(Icons.person_add_alt_1, size: 18),
                               const SizedBox(width: 10),
                               Text(
                                 "Create Admin Account",
@@ -467,11 +423,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.arrow_back,
-                      color: widget.primaryColor,
-                      size: 16,
-                    ),
+                    Icon(Icons.arrow_back, color: widget.primaryColor, size: 16),
                     const SizedBox(width: 6),
                     Text(
                       "Back to Home",
